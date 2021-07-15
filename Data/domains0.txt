@@ -1,0 +1,5 @@
+asusgl702
+deluge702
+radarr702
+sonarr702
+tautulli702
