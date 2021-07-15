@@ -1,4 +1,6 @@
-﻿$scriptDir = '.\Data'
+﻿$progressPreference = 'silentlyContinue'
+
+$scriptDir = '..\..\Data'
 $domainFiles = (Get-ChildItem -Path $scriptDir -recurse -filter domains*.txt | Group-Object -Property Directory)
 $tokenFiles = (Get-ChildItem -Path $scriptDir -recurse -filter token*.txt | Group-Object -Property Directory)
 
@@ -47,8 +49,8 @@ while ($true)
 					Write-Host "Updated to" $responseTable.'IP Address'
 				}
 			}
-			$responseTable
-		}
+			
+		}	
 	}
 	else
 	{
