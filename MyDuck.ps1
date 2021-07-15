@@ -19,11 +19,17 @@ while($true){
                 $domains = $domains +"," + $d
             }
         }
-        $url = "https://www.duckdns.org/update?domains=" + $domains + "&token=" + $token + "&ip="
+        $url = "https://www.duckdns.org/update?domains=" + $domains + "&token=" + $token + "&ip=&verbose=true"
         $response = Invoke-WebRequest -Uri $url
-        $content = $response.content
-        $status = [String] ([Char] $content[0] + [Char] $content[1])
-        $status
+        $responseStr = [System.Text.Encoding]::UTF8.GetString($response.Content)
+        $responseArr = $responseStr.Split([Environment]::NewLine) | ? {$_}
+        $responseTable = [PSCustomObject]@{
+                            'Success' = $(If ($responseArr[0] -eq "OK") {$true} Else {$false}) 
+                            'IP Address'  = $responseArr[1]
+                            'Changed'  = $(If ($responseArr[2] -eq "UPDATED") {$true} Else {$false})
+                         }
+        $responseTable
+                                
     }
     TIMEOUT /T 300
 }
