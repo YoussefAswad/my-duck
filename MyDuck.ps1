@@ -8,8 +8,8 @@ while ($true)
 	{
 		For ($i = 0; $i -lt $domainFiles.Count; $i++)
 		{
-			$domainFile = Get-Content ($domainFiles.Name + "\" + $domainFiles.Group[$i])
-			$token = Get-Content ($tokenFiles.Name + "\" + $tokenFiles.Group[$i])
+			$domainFile = Get-Content ($domainFiles.Group[$i])
+			$token = Get-Content ($tokenFiles.Group[$i])
 			
 			$domains = $null
 			
@@ -28,7 +28,7 @@ while ($true)
 			$url = "https://www.duckdns.org/update?domains=" + $domains + "&token=" + $token + "&ip=&verbose=true"
 			$response = Invoke-WebRequest -Uri $url
 			$responseStr = [System.Text.Encoding]::UTF8.GetString($response.Content)
-			$responseArr = $responseStr.Split([Environment]::NewLine) | ? { $_ }
+			$responseArr = $responseStr.Split("`n") | ? { $_ }
 			$responseTable = [PSCustomObject]@{
 				'Success' = $(If ($responseArr[0] -eq "OK") { $true }
 					Else { $false })
@@ -54,6 +54,6 @@ while ($true)
 	{
 		Write-Host "No Internet Connection"
 	}
-	TIMEOUT /T 5
+	Start-Sleep -Seconds 5
 }
 
