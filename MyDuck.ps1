@@ -1,31 +1,28 @@
-﻿$scriptDir = '.\Data'
-$domainFiles = (Get-ChildItem -Path $scriptDir -recurse -filter domains*.txt | Group-Object -Property Directory)
-$tokenFiles = (Get-ChildItem -Path $scriptDir -recurse -filter token*.txt | Group-Object -Property Directory)
-
+﻿$configDir = '.\Data'
+$accountFiles = (Get-ChildItem -Path $configDir  -recurse -filter account*.conf )
+#$TokenFiles = (Get-ChildItem -Path $configDir  -recurse -filter token*.txt | Group-Object -Property Directory)
+$accounts = @()
+Foreach ($accountFile in $accountFiles){
+	Foreach ($i in $(Get-Content $accountFile)){
+		$line = $i.trim()
+		if (($line -ne "") -and -not ($line.StartsWith('#') -or $line.StartsWith('//'))){
+			Set-Variable -Name $line.Split("=")[0] -Value $line.Split("=",2)[1]
+		}
+	}
+	$account = @{
+				'Email' = $EMAIL
+				'Token' = $TOKEN
+				'Domains' = $DOMAINS
+			}
+			$accounts += ,$account
+}
 while ($true)
 {
-	if ($internet = Test-Connection -Quiet -ComputerName www.google.com)
+	if ($true)
 	{
-		For ($i = 0; $i -lt $domainFiles.Count; $i++)
+		Foreach ($account in $accounts)
 		{
-			$domainFile = Get-Content ($domainFiles.Group[$i])
-			$token = Get-Content ($tokenFiles.Group[$i])
-			
-			$domains = $null
-			
-			Foreach ($d in $domainFile)
-			{
-				
-				if ($domains -eq $null)
-				{
-					$domains = $d
-				}
-				else
-				{
-					$domains = $domains + "," + $d
-				}
-			}
-			$url = "https://www.duckdns.org/update?domains=" + $domains + "&token=" + $token + "&ip=&verbose=true"
+			$url = "https://www.duckdns.org/update?domains=" + $account.Domains + "&token=" + $account.Token + "&ip=&verbose=true"
 			$response = Invoke-WebRequest -Uri $url
 			$responseStr = [System.Text.Encoding]::UTF8.GetString($response.Content)
 			$responseArr = $responseStr.Split("`n") | ? { $_ }
@@ -56,4 +53,3 @@ while ($true)
 	}
 	Start-Sleep -Seconds 5
 }
-
