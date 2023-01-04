@@ -114,7 +114,7 @@ def Update(accounts):
             print("Domain(s) " + account["DOMAINS"] +
                   (" of account " + account["EMAIL"] if "EMAIL" in account else "") + " were" + (" not" if not res["Changed"] else "") + " updated." + " Current IP:" + res["IPV4"])
         else:
-            print("Connection to duckdns.org failed!")
+            print("connection to duckdns.org failed!")
 
 
 def CreateConfig():
@@ -146,7 +146,7 @@ def CreateConfig():
             if key in config:
                 config[key] = config_file[key]
     except:
-        print("No config file detected.")
+        print("no config file detected, using default vales")
 
     # Override with command line values
     for key in config_args:
@@ -185,7 +185,7 @@ def Run(config_args):
             Loop(config["ACCOUNTS"], int(config["INTERVAL"]))
         else:
             print(
-                "No account configs were detected!. Try adding an account and try again")
+                "no account configs were detected!. Try adding an account and try again")
     else:
         Update(config["ACCOUNTS"])
 
